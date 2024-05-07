@@ -2,3 +2,4 @@ docker
 env
 nginx
 docker-compose.yaml
+.idea
