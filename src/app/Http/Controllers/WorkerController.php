@@ -2,16 +2,51 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Worker\IndexRequest;
 use App\Http\Requests\Worker\StoreRequest;
 use App\Http\Requests\Worker\UpdateRequest;
 use App\Models\Worker;
 use Illuminate\Http\Request;
+use App\Services\WorkerService;
 
 class WorkerController extends Controller
 {
-    public function index()
+    protected $workerService;
+
+    public function __construct(WorkerService $workerService)
     {
-        $workers = Worker::all();
+        $this->workerService = $workerService;
+    }
+
+    public function index(IndexRequest $request)
+    {
+        $data = $request->validated();
+
+        $workerQuery = Worker::query();
+
+        if (isset($data['name'])) {
+            $workerQuery->where('name', 'like', "%{$data['name']}%");
+        }
+        if (isset($data['surname'])) {
+            $workerQuery->where('surname', 'like', "%{$data['surname']}%");
+        }
+        if (isset($data['email'])) {
+            $workerQuery->where('email', 'like', "%{$data['email']}%");
+        }
+        if (isset($data['ageFrom'])) {
+            $workerQuery->where('age', '>', $data['ageFrom']);
+        }
+        if (isset($data['ageTo'])) {
+            $workerQuery->where('age', '<', $data['ageTo']);
+        }
+        if (isset($data['description'])) {
+            $workerQuery->where('description', 'like', "%{$data['description']}%");
+        }
+        if (isset($data['is_married'])) {
+            $workerQuery->where('is_married', true);
+        }
+
+        $workers = $workerQuery->paginate(4);
         return view('worker.index', compact('workers'));
     }
 
@@ -28,10 +63,7 @@ class WorkerController extends Controller
     public function store(StoreRequest $request)
     {
         $data = $request->validated();
-        $data['is_married'] = isset($data['is_married']);
-
-        Worker::create($data);
-
+        $worker = $this->workerService->createWorker($data);
         return redirect()->route('worker.index');
     }
 
