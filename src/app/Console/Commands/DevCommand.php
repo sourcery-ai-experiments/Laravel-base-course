@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Position;
 use App\Models\Profile;
 use App\Models\User;
 use App\Models\Worker;
@@ -28,44 +29,85 @@ class DevCommand extends Command
      */
     public function handle()
     {
+        // $this->prepareData();
+        // Вручную
+        $position = Position::find(1);
+        $workers = Worker::where('position_id', $position->id)->get();
+        dd($workers->toArray());
+
+        $workers = Worker::whereIn('id', [1, 3])->get();
+        $posId = $workers->pluck('position_id')->unique();
+        $position = Position::whereIn('id', $posId)->get();
+
+        dd($position->toArray());
 
         // Концепция Laravel
-        $worker = Worker::find(1);
-        $profile = Profile::find(1);
-
-        print_r($worker->profile->toArray());
-        print_r($profile->worker->toArray());
-
-        // Вручную
-        $worker = Worker::find(1);
-        $profile = Profile::where('worker_id', $worker->id)->first();
-
-        $profile = Profile::find(1);
-        $worker = Worker::find($profile->worker_id);
-
-        $this->prepareData();
+        $worker = Worker::find(3);
+        $position = Position::find(2);
+        dd($worker->position->toArray());
+        dd($position->workers->toArray());
     }
 
     protected function prepareData()
     {
-        $workerInfo = [
+
+        $position1 = Position::create([
+            'title' => "Developer"
+        ]);
+        $position2 = Position::create([
+            'title' => "Manager"
+        ]);
+
+        $workerInfo1 = [
             'name' => 'Walter',
             'surname' => 'White',
+            'position_id' => $position1->id,
             'email' => 'ww@gmail.com',
             'age' => '45',
             'description' => 'Say my name...',
             'is_married' => true,
         ];
+        $workerInfo2 = [
+            'name' => 'Gus',
+            'surname' => 'Fring',
+            'position_id' => $position1->id,
+            'email' => 'callmegus@gmail.com',
+            'age' => '43',
+            'description' => 'Call me Gus',
+            'is_married' => false,
+        ];
+        $workerInfo3 = [
+            'name' => 'Saul',
+            'surname' => 'Goodman',
+            'position_id' => $position2->id,
+            'email' => 'bettercallsaul@gmail.com',
+            'age' => '40',
+            'description' => 'Better Call Saul!!!',
+            'is_married' => false,
+        ];
 
-        $worker = Worker::create($workerInfo);
+        $worker1 = Worker::create($workerInfo1);
+        $worker2 = Worker::create($workerInfo2);
+        $worker3 = Worker::create($workerInfo3);
 
-        $profileInfo = [
-            'worker_id' => $worker->id,
+        $profileInfo1 = [
+            'worker_id' => $worker1->id,
             'city' => 'Albuquerque',
-            'position' => 'School Teacher',
+            'exp' => 15,
+        ];
+        $profileInfo2 = [
+            'worker_id' => $worker2->id,
+            'city' => 'Albuquerque',
+            'exp' => 15,
+        ];
+        $profileInfo3 = [
+            'worker_id' => $worker3->id,
+            'city' => 'Albuquerque',
             'exp' => 15,
         ];
 
-        $profile = Profile::create($profileInfo);
+        $profile1 = Profile::create($profileInfo1);
+        $profile2 = Profile::create($profileInfo2);
+        $profile3 = Profile::create($profileInfo3);
     }
 }
