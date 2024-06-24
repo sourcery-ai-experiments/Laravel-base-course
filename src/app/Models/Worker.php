@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Worker extends Model
 {
@@ -21,5 +22,10 @@ class Worker extends Model
     public function position(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Position::class, 'position_id', 'id');
+    }
+
+    public function projects(): BelongsToMany
+    {
+        return $this->BelongsToMany(Project::class, 'project_workers', 'worker_id', 'project_id');
     }
 }
