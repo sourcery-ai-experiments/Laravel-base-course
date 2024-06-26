@@ -18,4 +18,9 @@ class Department extends Model
         return $this->hasOneThrough(Worker::class, Position::class, 'department_id', 'position_id', 'id', 'id')
             ->where('position_id', 4);
     }
+
+    public function workers(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->HasManyThrough(Worker::class, Position::class, 'department_id', 'position_id', 'id', 'id');
+    }
 }

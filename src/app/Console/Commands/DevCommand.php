@@ -32,14 +32,14 @@ class DevCommand extends Command
      */
     public function handle()
     {
-
         $department = Department::find(2);
         $worker = Worker::find(7);
 
         dump($department->ceo->toArray());
         dump($worker->position->department->toArray());
 
-         return 0;
+        $department = Department::find(1);
+        dump($department->workers->toArray());
     }
 
     protected function prepareData(): void
