@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Department;
 use App\Models\Position;
 use App\Models\Profile;
 use App\Models\Project;
@@ -31,36 +32,36 @@ class DevCommand extends Command
      */
     public function handle()
     {
-        // $this->prepareData();
-        // $this->prepareManyToMany();
 
-        // Вручную maty-to-many
-        $project = Project::find(2);
-        $worker = Worker::find(2);
+        $department = Department::find(2);
+        $worker = Worker::find(7);
 
-        $projectWorkers = ProjectWorker::where('project_id', $project->id)->get();
-        $workerIds = $projectWorkers->pluck('worker_id')->toArray();
-        $workers = Worker::whereIn('id', $workerIds)->get();
-        // dd($workers->toArray());
-
-        // Концепция Laravel
-        // dd($project->workers->toArray());
-        // dd($worker->projects->toArray());
+        dump($department->ceo->toArray());
+        dump($worker->position->department->toArray());
 
          return 0;
     }
 
     protected function prepareData(): void
     {
+        $department1 = Department::create([
+            'title' => 'IT Department',
+        ]);
+        $department2 = Department::create([
+            'title' => 'Manage Department',
+        ]);
 
         $position1 = Position::create([
-            'title' => "Developer"
+            'title' => 'Developer',
+            'department_id' => $department1->id,
         ]);
         $position2 = Position::create([
-            'title' => "Manager"
+            'title' => 'Manager',
+            'department_id' => $department2->id,
         ]);
         $position3 = Position::create([
-            'title' => "Designer"
+            'title' => 'Designer',
+            'department_id' => $department1->id,
         ]);
 
         $workerInfo1 = [
