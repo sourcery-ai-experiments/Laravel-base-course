@@ -60,6 +60,11 @@ class WorkerController extends Controller
         return view('worker.create');
     }
 
+    public function create()
+    {
+        dd('test');
+    }
+
     public function store(StoreRequest $request)
     {
         $data = $request->validated();
